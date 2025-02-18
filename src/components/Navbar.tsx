@@ -6,7 +6,7 @@ const Navbar = () => {
     <nav className="w-full bg-white shadow-sm">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         <Link to="/" className="flex items-center space-x-2">
-          <img src="/lovable-uploads/bc1eeb02-97ea-4e52-84fe-ad478de7e74e.png" alt="Costco Gas Guide" className="h-8" />
+          <img src="/lovable-uploads/6c3538b9-6781-4bf2-8a00-8f113382a588.png" alt="Costco Gas Guide" className="h-8" />
         </Link>
         <div className="hidden md:flex items-center space-x-6">
           <Link to="/" className="text-gray-700 hover:text-costco-blue transition-colors">
