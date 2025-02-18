@@ -1,12 +1,47 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import Navbar from "@/components/Navbar";
+import SearchSection from "@/components/SearchSection";
+import LocationGrid from "@/components/LocationGrid";
+import FaqSection from "@/components/FaqSection";
+import Footer from "@/components/Footer";
+
+const usStates = [
+  { name: "Alabama" }, { name: "Alaska" }, { name: "Arizona" },
+  { name: "Arkansas" }, { name: "California" }, { name: "Colorado" },
+  // ... Add all states
+];
+
+const canadaProvinces = [
+  { name: "Alberta" }, { name: "British Columbia" }, { name: "Manitoba" },
+  // ... Add all provinces
+];
+
+const ukCities = [
+  { name: "Birmingham" }, { name: "Bristol" }, { name: "Chester" },
+  // ... Add all cities
+];
 
 const Index = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen flex flex-col">
+      <Navbar />
+      <SearchSection />
+      <main>
+        <LocationGrid
+          title="US GAS STATIONS BY STATE"
+          locations={usStates}
+        />
+        <LocationGrid
+          title="CANADA GAS STATIONS BY STATE"
+          locations={canadaProvinces}
+        />
+        <LocationGrid
+          title="UNITED KINGDOM GAS STATIONS BY TOWN"
+          locations={ukCities}
+        />
+        <FaqSection />
+      </main>
+      <Footer />
     </div>
   );
 };
