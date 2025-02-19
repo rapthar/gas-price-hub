@@ -15,9 +15,9 @@ const LocationGrid = ({ title, locations }: LocationGridProps) => {
           <Link
             key={location.name}
             to={`/location/${location.name.toLowerCase()}`}
-            className={`text-sm ${
+            className={`p-4 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow border border-gray-100 text-center ${
               location.active ? "text-costco-red" : "text-gray-600"
-            } hover:text-costco-blue transition-colors`}
+            } hover:text-costco-blue`}
           >
             {location.name}
           </Link>
