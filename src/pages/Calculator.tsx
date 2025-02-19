@@ -2,87 +2,176 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useState } from "react";
+import { Slider } from "@/components/ui/slider";
+import { Minus, Plus } from "lucide-react";
 
 const Calculator = () => {
-  const [distance, setDistance] = useState("");
-  const [fuelEfficiency, setFuelEfficiency] = useState("");
-  const [fuelPrice, setFuelPrice] = useState("");
-  const [result, setResult] = useState<number | null>(null);
+  const [distance, setDistance] = useState("1000");
+  const [distanceType, setDistanceType] = useState<"kilometers" | "miles">("kilometers");
+  const [fuelEfficiency, setFuelEfficiency] = useState("10");
+  const [efficiencyType, setEfficiencyType] = useState<"kpl" | "mpg">("kpl");
+  const [fuelUnit, setFuelUnit] = useState<"liter" | "gallon">("liter");
+  const [fuelPrice, setFuelPrice] = useState(2);
 
-  const calculateCost = (e: React.FormEvent) => {
-    e.preventDefault();
-    const cost = (Number(distance) / Number(fuelEfficiency)) * Number(fuelPrice);
-    setResult(Number(cost.toFixed(2)));
+  const calculateCost = () => {
+    // Convert all values to a common unit (liters and kilometers) for calculation
+    let distanceInKm = distanceType === "miles" ? Number(distance) * 1.60934 : Number(distance);
+    let efficiencyInKpl = efficiencyType === "mpg" ? Number(fuelEfficiency) * 0.425144 : Number(fuelEfficiency);
+    let pricePerLiter = fuelUnit === "gallon" ? fuelPrice / 3.78541 : fuelPrice;
+
+    const cost = (distanceInKm / efficiencyInKpl) * pricePerLiter;
+    return cost.toFixed(2);
+  };
+
+  const handleDistanceChange = (value: string) => {
+    const numValue = Number(value);
+    if (numValue >= 0 && numValue <= 10000) {
+      setDistance(value);
+    }
   };
 
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      <main className="flex-1">
-        <div className="bg-costco-blue py-8">
-          <h1 className="text-3xl font-bold text-white text-center">
-            Fuel Cost Calculator
-          </h1>
-        </div>
+      <main className="flex-1 bg-gray-50">
         <div className="container mx-auto px-4 py-8">
-          <div className="max-w-md mx-auto bg-white rounded-lg shadow-md p-6">
-            <form onSubmit={calculateCost} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Distance (miles)
-                </label>
+          <div className="max-w-xl mx-auto bg-white rounded-2xl shadow-lg p-8">
+            <h1 className="text-3xl font-bold text-center mb-4">
+              Fuel Cost Calculator
+            </h1>
+            <p className="text-gray-600 text-center mb-8">
+              Fuel cost calculator estimates expenses based on vehicle efficiency, distance, and current fuel prices.
+            </p>
+
+            {/* Trip Distance Section */}
+            <div className="mb-8">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Trip Distance
+              </label>
+              <div className="flex gap-2 mb-4">
+                <button
+                  className={`px-4 py-2 rounded-full ${
+                    distanceType === "kilometers"
+                      ? "bg-blue-600 text-white"
+                      : "bg-gray-100 text-gray-700"
+                  }`}
+                  onClick={() => setDistanceType("kilometers")}
+                >
+                  Kilometers
+                </button>
+                <button
+                  className={`px-4 py-2 rounded-full ${
+                    distanceType === "miles"
+                      ? "bg-blue-600 text-white"
+                      : "bg-gray-100 text-gray-700"
+                  }`}
+                  onClick={() => setDistanceType("miles")}
+                >
+                  Miles
+                </button>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  className="p-2 rounded-lg bg-gray-100"
+                  onClick={() => handleDistanceChange((Number(distance) - 100).toString())}
+                >
+                  <Minus className="h-4 w-4" />
+                </button>
                 <input
                   type="number"
                   value={distance}
-                  onChange={(e) => setDistance(e.target.value)}
-                  className="w-full p-2 border rounded-md"
-                  required
+                  onChange={(e) => handleDistanceChange(e.target.value)}
+                  className="flex-1 p-2 border rounded-lg text-center"
                   min="0"
-                  step="0.1"
+                  max="10000"
                 />
+                <button
+                  className="p-2 rounded-lg bg-gray-100"
+                  onClick={() => handleDistanceChange((Number(distance) + 100).toString())}
+                >
+                  <Plus className="h-4 w-4" />
+                </button>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Fuel Efficiency (miles per gallon)
-                </label>
+            </div>
+
+            {/* Fuel Efficiency Section */}
+            <div className="mb-8">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Fuel Efficiency
+              </label>
+              <div className="flex gap-4 items-center">
                 <input
                   type="number"
                   value={fuelEfficiency}
                   onChange={(e) => setFuelEfficiency(e.target.value)}
-                  className="w-full p-2 border rounded-md"
-                  required
+                  className="w-24 p-2 border rounded-lg text-center"
                   min="0"
-                  step="0.1"
                 />
+                <select
+                  value={efficiencyType}
+                  onChange={(e) => setEfficiencyType(e.target.value as "kpl" | "mpg")}
+                  className="flex-1 p-2 border rounded-lg bg-white"
+                >
+                  <option value="kpl">Kilometers per Liter</option>
+                  <option value="mpg">Miles per Gallon</option>
+                </select>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Fuel Price ($ per gallon)
-                </label>
-                <input
-                  type="number"
-                  value={fuelPrice}
-                  onChange={(e) => setFuelPrice(e.target.value)}
-                  className="w-full p-2 border rounded-md"
-                  required
-                  min="0"
-                  step="0.01"
-                />
+              <p className="text-xs text-gray-500 mt-1">
+                *How far a vehicle can travel on a specific amount of fuel
+              </p>
+            </div>
+
+            {/* Fuel Price Section */}
+            <div className="mb-8">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Gas / Fuel Price
+              </label>
+              <div className="flex gap-2 mb-4">
+                <button
+                  className={`px-4 py-2 rounded-full ${
+                    fuelUnit === "liter"
+                      ? "bg-blue-600 text-white"
+                      : "bg-gray-100 text-gray-700"
+                  }`}
+                  onClick={() => setFuelUnit("liter")}
+                >
+                  Liter
+                </button>
+                <button
+                  className={`px-4 py-2 rounded-full ${
+                    fuelUnit === "gallon"
+                      ? "bg-blue-600 text-white"
+                      : "bg-gray-100 text-gray-700"
+                  }`}
+                  onClick={() => setFuelUnit("gallon")}
+                >
+                  Gallon
+                </button>
               </div>
-              <button
-                type="submit"
-                className="w-full bg-costco-blue text-white py-2 rounded-md hover:bg-blue-700 transition-colors"
-              >
-                Calculate
-              </button>
-            </form>
-            {result !== null && (
-              <div className="mt-6 p-4 bg-gray-50 rounded-md">
-                <p className="text-center text-lg font-medium">
-                  Estimated Fuel Cost: ${result}
-                </p>
+              <p className="text-sm text-gray-700 mb-2">
+                $ {fuelPrice.toFixed(2)} per {fuelUnit}
+              </p>
+              <Slider
+                value={[fuelPrice]}
+                onValueChange={(value) => setFuelPrice(value[0])}
+                max={5}
+                min={0}
+                step={0.1}
+                className="my-4"
+              />
+              <div className="flex justify-between text-sm text-gray-500">
+                <span>0 $</span>
+                <span>5 $</span>
               </div>
-            )}
+            </div>
+
+            {/* Total Cost Display */}
+            <div className="bg-gray-50 p-6 rounded-lg">
+              <h3 className="text-gray-700 mb-2">Total Fuel Cost</h3>
+              <div className="text-4xl font-bold">
+                <span className="text-blue-600">$</span> {calculateCost()}
+              </div>
+            </div>
           </div>
         </div>
       </main>
